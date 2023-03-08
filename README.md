@@ -172,5 +172,5 @@ EOF
 Pour stocker le token dans une variable d'environnement on peut utiliser la commande :
 
 ```
-$ ARGO_TOKEN="Bearer $(kubectl get secret <role_binding_name>.service-account-token -o=jsonpath='{.data.token}' | base64 --decode)"
+$ ARGO_TOKEN="Bearer $(kubectl get secret <secret_name> -o=jsonpath='{.data.token}' | base64 --decode)"
 ```
