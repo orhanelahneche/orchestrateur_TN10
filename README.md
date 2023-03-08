@@ -1,5 +1,7 @@
 # install_kub_cluster
-**utiliser les scripts fournis pour installer wsl 2
+
+##utiliser les scripts fournis pour installer wsl 2
+
 Il faut d'abord télécharger l'archive CreateImageWSL2, qui sera fourni, puis éxécuter le script d'installation.
 
 {% filename %}command-line{% endfilename %}
