@@ -4,8 +4,8 @@
 
 Il faut d'abord télécharger l'archive CreateImageWSL2, qui sera fourni, puis éxécuter le script d'installation.
 
-'''
+```
 $ ./install_wsl.bat
-'''
+```
 
 Une fois le script éxécuté les principaux éléments de bases servant nottament à docker sont installés.
