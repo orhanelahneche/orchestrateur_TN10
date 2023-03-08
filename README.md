@@ -76,3 +76,28 @@ $ curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
 Une fois k3d installé, on peut créer notre premier cluster : 
 
 ```
+$ k3d cluster create <cluster_name> --k3s-arg '--kubelet-arg=--system-reserved=cpu=2000m,memory=1Gi,ephemeral-storage=1Gi@server:*'
+```
+
+Le drapeau *--k3s-arg* vous permet de passer des arguments supplémentaires à la commande k3s server qui est exécutée sur chaque nœud du cluster k3d. Le drapeau *--kubelet-arg* nous sert à passer des arguments au  kubelet du noeuds filtré par *@server:*, dans notre cas on réserve une partie des ressources du nœud au fonctionnement du système.
+
+## Installation de argo
+On crée un namespace "argo" dans le cluster précédemment créé et on y applique une une configuration pour éxécuter le server et le controler argo:
+
+```
+$ kubectl create namespace argo
+$ kubectl apply -n argo -f https://github.com/argoproj/argo-workflows/releases/download/v<<ARGO_WORKFLOWS_VERSION>>/install.yaml
+```
+
+Dans un premier temps on va modifier le mode d'authentification du server pour éviter d'avoir besoin de se login :
+
+```
+$ kubectl patch deployment \
+  argo-server \
+  --namespace argo \
+  --type='json' \
+  -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/args", "value": [
+  "server",
+  "--auth-mode=server"
+]}]'
+```
