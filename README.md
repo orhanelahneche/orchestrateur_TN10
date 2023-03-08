@@ -128,7 +128,7 @@ $ gunzip argo-linux-amd64.gz
 $ chmod +x argo-linux-amd64
 
 # Move binary to path
-$ mv ./argo-linux-amd64 /usr/local/bin/argo
+$ sudo mv ./argo-linux-amd64 /usr/local/bin/argo
 
 # Test installation
 $ argo version
@@ -138,4 +138,39 @@ Et enfin nous rendons le serveur accesibles depuis l'extérieur :
 
 ```
 $ kubectl -n argo port-forward deployment/argo-server 2746:2746
+```
+
+## Création d'un token argo pour accéder à l'API argo
+
+Pour commencer, on crée un rôle avec des autorisations minimales puis on crée un compte de service pour ce dernier:
+
+```
+$ kubectl create role <role_name> --verb=list,update --resource=workflows.argoproj.io 
+$ kubectl create sa <service_account_name>
+```
+
+On continue en liant le rôle et le compte de service :
+
+```
+$ kubectl create rolebinding <role_binding_name> --role=<role_name> --serviceaccount=argo:<service_account_name>
+```
+
+On créer un secret pour contenir le token :
+
+```
+$   kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: jenkins.service-account-token
+  annotations:
+    kubernetes.io/service-account.name: <service_acount_name>
+type: kubernetes.io/service-account-token
+EOF
+```
+
+Pour stocker le token dans une variable d'environnement on peut utiliser la commande :
+
+```
+$ ARGO_TOKEN="Bearer $(kubectl get secret <role_binding_name>.service-account-token -o=jsonpath='{.data.token}' | base64 --decode)"
 ```
