@@ -76,10 +76,16 @@ $ curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
 Une fois k3d installé, on peut créer notre premier cluster : 
 
 ```
-$ k3d cluster create <cluster_name> --k3s-arg '--kubelet-arg=--system-reserved=cpu=2000m,memory=1Gi,ephemeral-storage=1Gi@server:*'
+$ k3d cluster create <cluster_name> --k3s-arg '--kubelet-arg=--system-reserved=cpu=2000m,memory=1Gi,ephemeral-storage=1Gi@server:*' --registry-use k3d-myregistry.localhost:12345
 ```
 
 Le drapeau *--k3s-arg* vous permet de passer des arguments supplémentaires à la commande k3s server qui est exécutée sur chaque nœud du cluster k3d. Le drapeau *--kubelet-arg* nous sert à passer des arguments au  kubelet du noeuds filtré par *@server:*, dans notre cas on réserve une partie des ressources du nœud au fonctionnement du système.
+
+Attendre que tous les pods soit dans l'état *Running* pour passer aux prochaines étapes. Vous pouvez vérifier les états des différents pods avec la commande :
+
+```
+$ kubectl get pods -A
+```
 
 ## Installation kubectl
 Avant de passer à la suite il faut installer le cli kubernetes, kubectl, pour interagir avec notre cluster. Pour ceci, on va télécharger la dernière release kubectl puis utiliser le binaire pour en faire une commande éxecutable.
